@@ -26,7 +26,8 @@
 "build": "yarn start",
     "test": "npx hardhat test",
     "dev": "hardhat deploy --network hardhat && hardhat node --network hardhat",
-    "frontend": "cd frontend && npm run start"
+    "frontend": "cd frontend && npm run start",
+"frontend1": "cd frontend && yarn start"
   },
   "repository": {
     "type": "git",
