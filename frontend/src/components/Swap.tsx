@@ -10,11 +10,10 @@ interface Props {
     tokenA: string;
     tokenB: string;
 }
-//import styled from 'styled-components';
 
-// test test
 
 export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
+
     const ERC20Factory = useContext(ERC20Context);
 
     const [tokenAInstance, setTokenAInstance] = useState<ERC20>();
@@ -23,10 +22,12 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
     const [tokenASymbol, setTokenASymbol] = useState<string>();
     const [tokenBSymbol, setTokenBSymbol] = useState<string>();
 
+
     useEffect(() => {
         if (ERC20Factory.instance) {
             setTokenAInstance(ERC20Factory.instance!.attach(tokenA));
             setTokenBInstance(ERC20Factory.instance!.attach(tokenB));
+            
         }
     }, [ERC20Factory.instance, tokenA, tokenB]);
 
@@ -46,6 +47,7 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
 
     const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAmount(parseInt(event.target.value));
+
     };
 
     const router = useContext(UniswapV2Router02Context);
@@ -69,6 +71,7 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
         };
 
         fetchExchangeAmount();
+
     }, [router.instance, amount, tokenA, tokenB]);
 
     const [currentAddress] = useContext(CurrentAddressContext);
@@ -79,6 +82,25 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
             return;
         }
         const time = Math.floor(Date.now() / 1000) + 3600;
+
+
+        if (amount === 0) {
+            
+            
+            document.getElementById("amount")?.focus();
+            alert("Please Input an Amount");
+            
+            return; 
+        }
+
+        var answer = window.confirm("Do you want to swap " +  amount + " " + tokenASymbol + " token to " + parseFloat(exchangeAmount).toFixed(3)   + " " + tokenBSymbol + " token?");
+        if (answer) {
+     
+        }
+        else {
+     
+            return;
+        }
 
         await (
             await tokenAInstance.approve(
@@ -115,12 +137,13 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
                     <div className="bg-gray-500 border-4 border-green-400 mt-8 sm:rounded-lg float-right">
                         <div className="text-gray-200 text-xl text-left ml-3">Amount:
                             <input
-                                type="text"
+                                type="number"
                                 name="Amount"
                                 id="amount"
+                                
 
                                 className="mx-2 flex-item shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block  border-gray-300 rounded-md text-gray-800 text-2xl w-80 text-center bg-gray-200"
-                                placeholder="20"
+                                placeholder="Enter an amount"
                                 onChange={handleAmountChange}
                             />
                         </div>
@@ -164,7 +187,7 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
                     className="justify-center px-4 py-1 border border-transparent shadow-sm font-medium rounded-md text-black bg-yellow-300 hover:bg-indigo-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={handleSwap}
                 >
-                    Connect to a wallet
+                    Swap
                 </button>
 
             </div>
@@ -172,4 +195,3 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
 
     );
 };
-
