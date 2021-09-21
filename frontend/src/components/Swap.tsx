@@ -52,8 +52,9 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
 
     const router = useContext(UniswapV2Router02Context);
     const [exchangeAmount, setExchangeAmount] = useState<string>("0");
+    const [currentAddress] = useContext(CurrentAddressContext);
 
-    // Declare const for ethbalance, network
+    // Declare const for balanceeth, network
     const [_setBalanceETH, setBalanceETH] = useState<string>("0");
     const [_setConnectedNetwork, setConnectedNetwork] = useState<string>("0");
     //  const [_balanceOfTokenA, setbalanceOfTokenA] = useState<string>("0");
@@ -66,8 +67,8 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
                 return;
             }
 
-            // Get the value of ethbalance, network
-            const getBalanceOfETH = ethers.utils.formatEther(await router.instance.provider.getBalance(currentAddress));
+            // Get the value of balanceeth, network
+            const getBalanceOfETH = (await ethers.utils.formatEther(await router.instance.provider.getBalance(currentAddress)));
             setBalanceETH(parseFloat(getBalanceOfETH).toFixed(3));
             setConnectedNetwork((await router.instance.provider.getNetwork()).name);
 
@@ -86,9 +87,9 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
 
         fetchExchangeAmount();
 
-    }, [router.instance, amount, tokenA, tokenB]);
+    }, [router.instance, amount, tokenA, tokenB, currentAddress]);
 
-    const [currentAddress] = useContext(CurrentAddressContext);
+    
 
     const handleSwap = async () => {
         if (!router.instance || !tokenAInstance) {
