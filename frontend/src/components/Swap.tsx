@@ -27,7 +27,7 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
         if (ERC20Factory.instance) {
             setTokenAInstance(ERC20Factory.instance!.attach(tokenA));
             setTokenBInstance(ERC20Factory.instance!.attach(tokenB));
-            
+
         }
     }, [ERC20Factory.instance, tokenA, tokenB]);
 
@@ -53,12 +53,26 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
     const router = useContext(UniswapV2Router02Context);
     const [exchangeAmount, setExchangeAmount] = useState<string>("0");
 
+    // Declare const for ethbalance, network
+    const [_setBalanceETH, setBalanceETH] = useState<string>("0");
+    const [_setConnectedNetwork, setConnectedNetwork] = useState<string>("0");
+    //  const [_balanceOfTokenA, setbalanceOfTokenA] = useState<string>("0");
+
+
     useEffect(() => {
         const fetchExchangeAmount = async () => {
             if (!router.instance) {
                 console.log("router instance not found");
                 return;
             }
+
+            // Get the value of ethbalance, network
+            const getBalanceOfETH = ethers.utils.formatEther(await router.instance.provider.getBalance(currentAddress));
+            setBalanceETH(parseFloat(getBalanceOfETH).toFixed(3));
+            setConnectedNetwork((await router.instance.provider.getNetwork()).name);
+
+            //setbalanceOfTokenA((await router.instance.provider.getGasPrice()).toString());
+
 
             if (amount > 0) {
                 // router gets angry if you pass in a 0
@@ -85,20 +99,20 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
 
 
         if (amount === 0) {
-            
-            
+
+
             document.getElementById("amount")?.focus();
             alert("Please Input an Amount");
-            
-            return; 
+
+            return;
         }
 
-        var answer = window.confirm("Do you want to swap " +  amount + " " + tokenASymbol + " token to " + parseFloat(exchangeAmount).toFixed(3)   + " " + tokenBSymbol + " token?");
+        var answer = window.confirm("Do you want to swap " + amount + " " + tokenASymbol + " token to " + parseFloat(exchangeAmount).toFixed(3) + " " + tokenBSymbol + " token?");
         if (answer) {
-     
+
         }
         else {
-     
+
             return;
         }
 
@@ -120,9 +134,17 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
     };
 
     return (
-        <div className="bg-gray-900 shadow sm:rounded-lg border-4 border-purple-900 h-80 ">
+
+        <div className="bg-gray-900 shadow sm:rounded-lg border-4 border-purple-900 h-96" style={{width: 650}}>
+
+            <div className="font-san border-none border-purple-500 text-red-500 float-left w-32 mb-8 mt-2">Network: {_setConnectedNetwork}</div>
+            <div className="font-san border-none border-purple-500 text-yellow-200 float-left w-28 mt-2">ETH: {_setBalanceETH}</div>
+            <div className="font-san border-none border-purple-500 text-blue-300 float-left w-60 mb-8 mt-2 text-left"> {currentAddress}</div>
+
             <div className="px-4 py-3">
                 <div className="clear-both h-20">
+
+
                     <div className="bg-green-500 px-6 border-none sm:rounded-lg float-left">
 
                         <div className="text-sm text-gray-200">Swap From: </div>
@@ -134,13 +156,13 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
                         <div className="text-white text-2xl font-bold font-sans">{tokenASymbol}</div>
                     </div>
 
-                    <div className="bg-gray-500 border-4 border-green-400 mt-8 sm:rounded-lg float-right">
+                    <div className="bg-gray-500 border-4 border-green-400 sm:rounded-lg float-right mt-4 mr-10">
                         <div className="text-gray-200 text-xl text-left ml-3">Amount:
                             <input
                                 type="number"
                                 name="Amount"
                                 id="amount"
-                                
+
 
                                 className="mx-2 flex-item shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block  border-gray-300 rounded-md text-gray-800 text-2xl w-80 text-center bg-gray-200"
                                 placeholder="Enter an amount"
@@ -165,8 +187,8 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
                         <div className="text-white text-2xl font-bold font-sans">{tokenBSymbol}</div>
                     </div>
 
-                    <div className="bg-gray-500 border-4 border-pink-500 sm:rounded-lg mt-4 float-right">
-                        <div className="text-gray-200 text-xl text-left ml-3">Receive:
+                    <div className="bg-gray-500 border-4 border-pink-500 sm:rounded-lg mt-4 mr-10 float-right">
+                        <div className="text-gray-200 text-xl text-left ml-3 cursor-not-allowed">Receive:
                             <input
                                 type="text"
                                 name="Receive"
@@ -181,7 +203,7 @@ export const Swap: React.FC<Props> = ({ tokenA, tokenB }) => {
                 </div>
             </div>
 
-            <div className="float-right mr-4 mt-4">
+            <div className="float-right mr-16 mt-4">
                 <button
                     type="submit"
                     className="justify-center px-4 py-1 border border-transparent shadow-sm font-medium rounded-md text-black bg-yellow-300 hover:bg-indigo-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
